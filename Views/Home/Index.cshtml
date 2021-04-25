@@ -1,0 +1,82 @@
+﻿@model WebCipher.Models.CipherModel
+@{
+    ViewData["Title"] = "Main Page";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Шифр Виженера онлайн</h1>
+    <p>Пожалуйста введите ваш текст в поле для текста, выберите опции ширования, введите ключ и нажмите "Рассчитать" для преобразования текста шифром Виженера. Инструмент пропускает все символы кроме русских букв, а также переводит все символы в нижний регистр.</p>
+</div>
+<div class="cipher-block">
+    <form enctype="multipart/form-data" method="post" action="">
+        <div class="form-group">
+            <div class="form-group">
+                <label asp-for="InputText" class="control-label">Введите текст:</label>
+                <textarea asp-for="InputText" class="form-control" rows="6">@Model.InputText</textarea>
+            </div>
+            <div class="row justify-content-md-left" align="left" style="margin: 15px auto 15px;">
+                <div class="col-md-auto">
+                    Или загрузите файл с текстом (.docx или .txt):<input asp-for="InputFile" class="form-control-file">
+                </div>
+                <div class="col-md-auto" align="left">
+                    <label class="control-label" asp-for="FileEncoding">Кодировка файла</label>
+                    <select asp-for="FileEncoding" class="form-control">
+                        <option value="auto" selected>UTF-8/Авто</option>
+                        <option value="ansi">ANSI</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row" align="center" style="margin: 15px auto 15px;">
+                <div class="col-sm">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                            <input asp-for="Direction" type="radio" autocomplete="off" checked value="Cipher">Зашифровать
+                        </label>
+                        <label class="btn btn-secondary">
+                            <input asp-for="Direction" type="radio" autocomplete="off" value="Decipher">Расшифровать
+                        </label>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="addon-key">Ключ:</span>
+                        </div>
+                        <input type="text" asp-for="Key" class="form-control" aria-describedby="addon-key">
+                        <span asp-validation-for="Key" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-sm" align="right">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" asp-for="UseFile" class="custom-control-input">
+                        <label class="custom-control-label" asp-for="UseFile">Из файла</label>
+                    </div>
+                </div>
+                <div class="col-sm" align="left">
+                    <input asp-action="Decipher" class="btn btn-primary" type="submit" value="Рассчитать">
+                </div>
+            </div>
+        </div>
+
+        @if (Model.OutputText != null)
+        {
+            <label asp-for="OutputText">Результат:</label>
+            <textarea asp-for="OutputText" class="form-control" id="output" rows="6" readonly>@Model.OutputText</textarea>
+            <div class="btn-group" role="group">
+                <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin: 15px auto 15px;">
+                    Скачать
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                    <input class="dropdown-item" asp-action="DownloadFileTXT" type="submit" value="TXT">
+                    <input class="dropdown-item" asp-action="DownloadFileDOCX" type="submit" value="DOCX">
+                </div>
+            </div>
+        }
+    </form>
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
